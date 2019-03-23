@@ -1,0 +1,7 @@
+/vendor/
+.idea/
+composer.json
+composer.lock
+database.sqlite
+config/config.json
+templates/twig_compilation_cache/

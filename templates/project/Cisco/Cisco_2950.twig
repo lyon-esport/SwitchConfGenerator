@@ -1,0 +1,74 @@
+!
+{# HOSTNAME #}
+hostname {{ switch.hostname }}
+!
+no logging on
+!
+{# PASSWORD #}
+service password-encryption
+enable secret 7 {{ switch.authorization.password.cryptedPass }}
+!
+{# SPANNING TREE #}
+{% if switch.spanningTree == 'No' %}
+{% for each_vlan in switch.listVlan %}
+no spanning-tree vlan {{ each_vlan.id }}
+{% endfor %}
+{% else %}
+spanning-tree portfast default
+{% endif %}
+no cdp run
+vtp mode transparent
+!
+{# VLAN #}
+{% for each_vlan in switch.listVlan %}
+vlan {{ each_vlan.id }}
+ name {{ each_vlan.name }}
+!
+{% if each_vlan.network.ip is not empty %}
+interface Vlan {{ each_vlan.id }}
+  ip address {{ each_vlan.network.ip }} {{ each_vlan.network.netmask }}
+  no shutdown
+!
+{% endif %}
+{% endfor %}
+{# PORT #}
+{% for port in switch.port %}
+interface {{ port.name }}
+{% if port.untagged is not empty and port.tagged is empty %}
+switchport mode access
+  switchport access vlan {{ switch.listVlan[port.untagged].id }}
+{% elseif port.tagged is not empty %}
+{% set vlan_list_id = "" %}
+{% for vlan in port.tagged %}{% if vlan_list_id is empty %}{% set vlan_list_id = vlan %}{% else %}{% set vlan_list_id = vlan_list_id ~ ',' ~ vlan %}{% endif %}{% endfor %}
+switchport mode trunk
+  switchport trunk allowed vlan {{ vlan_list_id }}
+{% if port.untagged is not empty %}
+switchport trunk native vlan {{ switch.listVlan[port.untagged].id }}
+{% endif %}
+{% endif %}
+!
+{% endfor %}
+{# DEFAULT_GATEWAY #}
+ip default-gateway {{ switch.default_gateway.ip }}
+!
+no ip http server
+{# SNMP #}
+snmp-server community {{ switch.snmp.community }} {{ switch.snmp.permissions }} 2
+!
+{# BANNER_MOTD #}
+banner motd ^
+{{ switch.bannerMotd }}
+                            Switch {{ switch.hostname }}
+^
+!
+{# AUTHORIZATION #}
+crypto key generate rsa
+!
+line con 0
+line vty 0 4
+ password 7 {{ switch.authorization.password.cryptedPass }}
+ login
+line vty 5 15
+ no login
+!
+end

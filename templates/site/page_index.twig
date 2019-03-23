@@ -1,0 +1,90 @@
+{% extends 'base.twig' %}
+{% block headers %}
+    {{ parent() }}
+    <script defer src="{{ js_path }}js/index_form.js" type="module"></script>
+{% endblock %}
+{% block body %}
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Create a new configuration</h1>
+            <h2 class="subtitle">
+                Select the company, the model and a template
+            </h2>
+        </div>
+    </section>
+    {% if switch_list_string is not empty and setting_string is not empty %}
+        <form action="pages/new_config.php" method="post">
+            <section class="section">
+                <span id="switch_list" data-info='{{ switch_list_string|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}'></span>
+                <span id="setting" data-info='{{ setting_string|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}'></span>
+                <div class="container has-text-centered">
+                    <div class="field">
+                        <div class="select">
+                            <select id="company" name="company" required>
+                            </select>
+                        </div>
+                        <div class="select">
+                            <select id="model" name="model" required>
+                            </select>
+                        </div>
+                        <div class="select">
+                            <select id="template" name="template" required>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="section">
+                <div class="container">
+                    <div class="columns">
+                        <div class="column is-offset-one-third is-one-third">
+                            <div class="field">
+                                <label class="label">Switch number</label>
+                                <p class="control has-icons-left has-icons-right">
+                                    <input id="sw_number" class="input" type="number" name="sw_number" placeholder="Switch number" min="1" max="254" required title="choose a number [0;255]">
+                                    <span class="icon is-small is-right">
+                                      <i class="fas fa-exclamation-triangle"></i>
+                                    </span>
+                                    <span class="icon is-small is-left">
+                                      <i class="fas fa-info-circle"></i>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <input name="{{ csrf.name }}" value="{{ csrf.value }}" type="hidden">
+            <section>
+                <div class="container has-text-centered">
+                    <button id="generate" class="button is-success" name="choice" value="generate">
+                    <span class="icon is-small">
+                        <i class="fa fa-file-code"></i>
+                    </span>
+                        <span>Generate</span>
+                    </button>
+                </div>
+            </section>
+            <br>
+        </form>
+    {% else %}
+        <section>
+            <div class="container">
+                <article class="message is-danger">
+                    <div class="message-header">
+                        <p>Error !</p>
+                    </div>
+                    <div class="message-body">
+                        {% if switch_list_string is empty %}
+                            You need to add a model templates.
+                        {% endif %}
+                        {% if setting_string is empty %}
+                            You need to add a setting templates.
+                        {% endif %}
+                    </div>
+                </article>
+            </div>
+        </section>
+        <br>
+    {% endif %}
+{% endblock %}

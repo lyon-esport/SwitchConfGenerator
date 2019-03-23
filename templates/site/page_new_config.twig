@@ -1,0 +1,58 @@
+{% extends 'site/base.twig' %}
+{% block headers %}
+    {{ parent() }}
+    <script defer src="{{ js_path }}js/new_config.js"></script>
+{% endblock %}
+{% block body %}
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Configuration</h1>
+            <h2 class="subtitle">
+                You can copy/paste it or download it.
+            </h2>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="field is-grouped is-grouped-multiline is-grouped-centered">
+                <div class="control">
+                    <div class="tags has-addons  has-text-centered">
+                        <span class="tag">Company</span>
+                        <span id="company" class="tag is-warning">{{ company }}</span>
+                    </div>
+                </div>
+                <div class="control">
+                    <div class="tags has-addons  has-text-centered">
+                        <span class="tag">Model</span>
+                        <span id="model" class="tag is-link">{{ model }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="container has-text-right">
+                <button id="copy_data" class="button is-success">
+                    <span class="icon is-small">
+                        <i class="fas fa-copy"></i>
+                    </span>
+                    <span>Copy</span>
+                </button>
+                <button id="edit_button" class="button is-link">
+                    <span class="icon is-small">
+                        <i id="edit_icon" class="fas fa-edit"></i>
+                    </span>
+                    <span id="edit_text">Readonly mode</span>
+                </button>
+            </div>
+            <br>
+            <textarea id="sw_config" class="textarea" rows="10" readonly>{% include template_model_path with {'switch' : switch} %}</textarea>
+            <br>
+            <div class="container has-text-centered">
+                <button id="download_config" class="button is-success">
+                <span class="icon is-small">
+                    <i class="fas fa-download "></i>
+                </span>
+                    <span>Download</span>
+                </button>
+            </div>
+        </div>
+    </section>
+{% endblock %}

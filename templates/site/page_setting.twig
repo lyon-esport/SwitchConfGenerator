@@ -1,0 +1,105 @@
+{% extends 'base.twig' %}
+{% block body %}
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Manage setting template</h1>
+            <h2 class="subtitle">
+                Preset some settings to save time
+            </h2>
+        </div>
+    </section>
+    {% if setting_list is not empty %}
+        <section class="section">
+            <div class="container">
+                <table class="table is-hoverable is-fullwidth is-bordered">
+                    <thead>
+                    <tr>
+                        <th class="has-text-info has-text-centered">Template</th>
+                        <th class="has-text-info has-text-centered">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in setting_list %}
+                            <form action="setting_backend.php" method="post">
+                                <tr>
+                                    <td class="has-text-centered">{{ item.template_name }}</td>
+                                    <td class="has-text-centered">
+                                        <button id="save" class="button is-warning" name="choice" value="edit">
+                                            <span class="icon is-small">
+                                                <i class="fas fa-edit"></i>
+                                            </span>
+                                            <span>Edit</span>
+                                        </button>
+                                        <a id="reset" class="button is-danger modal-button" data-target="modal_{{ item.id }}" aria-haspopup="true">
+                                            <span class="icon is-small">
+                                              <i class="fas fa-times"></i>
+                                            </span>
+                                            <span>Delete</span>
+                                        </a>
+                                        <div id="modal_{{ item.id }}" class="modal">
+                                            <div class="modal-background"></div>
+                                            <div class="modal-card">
+                                                <header class="modal-card-head">
+                                                    <p class="modal-card-title">Warning !</p>
+                                                    <a class="delete" aria-label="close"></a>
+                                                </header>
+                                                <section class="modal-card-body">
+                                                    <div class="notification is-danger">
+                                                        Are you sure you want to delete {{ item.template_name }} ?
+                                                    </div>
+                                                </section>
+                                                <footer class="modal-card-foot">
+                                                    <div class="container has-text-right">
+                                                        <button class="button is-danger" name="choice" value="delete">
+                                                            <span class="icon is-small">
+                                                                <i class="fas fa-check"></i>
+                                                            </span>
+                                                            <span>Delete</span>
+                                                        </button>
+                                                        <a class="button">
+                                                            <span class="icon is-small">
+                                                              <i class="fas fa-times"></i>
+                                                            </span>
+                                                            <span>Cancel</span>
+                                                        </a>
+                                                    </div>
+                                                </footer>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <input name="{{ csrf.name }}" value="{{ csrf.value }}" type="hidden">
+                                <input name="id" value="{{ item.id }}" type="hidden">
+                            </form>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    {% else %}
+        <section>
+            <div class="container">
+                <article class="message is-info">
+                    <div class="message-header">
+                        <p>Info !</p>
+                    </div>
+                    <div class="message-body">
+                        You need to add a model templates.
+                    </div>
+                </article>
+            </div>
+        </section>
+        <br>
+    {% endif %}
+    <section>
+        <div class="container has-text-centered">
+            <a class="button is-info" href="setting_edit.php?new">
+                <span class="icon is-small">
+                    <i class="fas fa-plus-circle"></i>
+                </span>
+                <span>Add template</span>
+            </a>
+        </div>
+    </section>
+    <br>
+{% endblock %}

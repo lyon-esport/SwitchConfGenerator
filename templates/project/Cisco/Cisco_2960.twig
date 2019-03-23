@@ -1,0 +1,133 @@
+!
+version 12.2
+no service pad
+service timestamps debug uptime
+service timestamps log uptime
+no service password-encryption
+!
+{# HOSTNAME #}
+hostname {{ switch.hostname }}
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 32768
+!
+{# PASSWORD #}
+username admin secret 7 {{ switch.authorization.password.cryptedPass }}
+!
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+aaa session-id common
+system mtu routing 1500
+vtp mode transparent
+!
+!
+ip dhcp snooping
+no ip domain-lookup
+!
+!
+!
+!
+!
+!
+!
+{# SPANNING TREE #}
+{% if switch.spanningTree == 'No' %}
+{% for each_vlan in switch.listVlan %}
+no spanning-tree vlan {{ each_vlan.id }}
+{% endfor %}
+{% else %}
+spanning-tree mode rapid-pvst
+spanning-tree portfast default
+spanning-tree portfast bpduguard default
+no spanning-tree optimize bpdu transmission
+spanning-tree extend system-id
+{% endif %}
+no cdp run
+!
+vlan internal allocation policy ascending
+!
+{# VLAN #}
+{% for each_vlan in switch.listVlan %}
+vlan {{ each_vlan.id }}
+ name {{ each_vlan.name }}
+!
+{% if each_vlan.network.ip is not empty %}
+interface Vlan {{ each_vlan.id }}
+  ip address {{ each_vlan.network.ip }} {{ each_vlan.network.netmask }}
+  no shutdown
+!
+{% endif %}
+{% endfor %}
+crypto key generate rsa general-keys modulus 2048
+
+ip ssh authentication-retries 5
+ip ssh logging events
+ip ssh version 2
+ip ssh logging events
+ip ssh time-out 120
+ip ssh authentication-retries 5
+!
+!
+{# PORT #}
+{% for port in switch.port %}
+interface {{ port.name }}
+{% if port.untagged is not empty and port.tagged is empty %}
+ switchport access vlan {{ switch.listVlan[port.untagged].id }}
+ switchport mode access
+{% elseif port.tagged is not empty %}
+ description UPLINK
+{% if port.untagged is not empty %}
+ switchport trunk native vlan {{ switch.listVlan[port.untagged].id }}
+{% endif %}
+ switchport mode trunk
+ spanning-tree bpdufilter disable
+ ip dhcp snooping trust
+{% endif %}
+!
+interface Vlan1
+ no ip address
+ no ip route-cache
+!
+{% endfor %}
+{# DEFAULT_GATEWAY #}
+ip default-gateway {{ switch.default_gateway.ip }}
+no ip http server
+no ip http secure-server
+no cdp run
+{# SNMP #}
+snmp-server community {{ switch.snmp.community }} {{ switch.snmp.permissions }} 1
+vstack
+{# BANNER_MOTD #}
+banner motd ^
+{{ switch.bannerMotd }}
+                            Switch {{ switch.hostname }}
+^
+!
+{# AUTHORIZATION #}
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ history size 256
+line vty 0 4
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ history size 256
+ transport input ssh
+line vty 5 15
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ history size 256
+ transport input ssh
+!
+end

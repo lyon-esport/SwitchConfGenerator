@@ -1,0 +1,364 @@
+{% extends 'base.twig' %}
+{% block headers %}
+    {{ parent() }}
+    <script defer src="{{ js_path }}js/setting_edit_form.js" type="module"></script>
+{% endblock %}
+{% block body %}
+    <section class="section">
+        <div class="container">
+            {% if setting is not empty %}
+                <h1 class="title">Update setting template : {{ setting.template_name }}</h1>
+            {% else %}
+                <h1 class="title">Create setting template</h1>
+            {% endif %}
+            <h2 class="subtitle">
+                Preset some settings to save time
+            </h2>
+        </div>
+    </section>
+    <form action="setting_backend.php" method="post">
+        <section class="section">
+            <div class="container">
+                <h1 class="title">Template name</h1>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left has-icons-right">
+                            <input id="template_name" class="input" type="text" name="template_name" placeholder="Template name" value="{{ setting.template_name }}"  pattern=".{3,32}" required title="3 characters minimum and 32 characters maximum">
+                            <span class="icon is-small is-right">
+                              <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                            <span class="icon is-small is-left">
+                              <i class="fas fa-passport"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <h1 class="title">SNMP</h1>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left has-icons-right">
+                            <input id="snmp_community" class="input" type="text" name="snmp_community" placeholder="Community" value="{{ setting.snmp_community }}"  pattern=".{3,32}" required title="3 characters minimum and 32 characters maximum">
+                            <span class="icon is-small is-right">
+                              <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                            <span class="icon is-small is-left">
+                              <i class="fas fa-handshake"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="field is-narrow">
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select id="snmp_permissions" name="snmp_permissions" required>
+                                    {% if setting.snmp_permissions == 'RW' %}
+                                        <option>RW</option>
+                                        <option>RO</option>
+                                    {% else %}
+                                        <option>RO</option>
+                                        <option>RW</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <h1 class="title">Authorization</h1>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left has-icons-right">
+                            <input id="auth_username" class="input" type="text" name="auth_username" placeholder="Username" value="{{ setting.auth_username }}" pattern=".{3,32}" required title="3 characters minimum and 32 characters maximum">
+                            <span class="icon is-small is-right">
+                              <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                            <span class="icon is-small is-left">
+                              <i class="fas fa-user"></i>
+                            </span>
+                        </p>
+                    </div>
+                    {% if setting is not empty %}
+                        <div class="field">
+                            <a href="setting_pass.php?id={{ setting.id }}" class="button is-info">
+                            <span class="icon is-small">
+                              <i class="fas fa-key"></i>
+                            </span>
+                                <span>Change password</span>
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="field">
+                            <p class="control is-expanded has-icons-left has-icons-right">
+                                <input id="password" class="input" type="password" autocomplete="off" name="password" placeholder="New password"  pattern=".{3,32}" required title="3 characters minimum and 32 characters maximum">
+                                <span class="icon is-small is-right">
+                              <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                                <span class="icon is-small is-left">
+                                 <i class="fas fa-key"></i>
+                            </span>
+                            </p>
+                        </div>
+                        <div class="field">
+                            <p class="control is-expanded has-icons-left has-icons-right">
+                                <input id="confirm_password" class="input" type="password" autocomplete="off" name="confirm_password" placeholder="Confirm new password"  pattern=".{3,32}" required title="3 characters minimum and 32 characters maximum">
+                                <span class="icon is-small is-right">
+                              <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                                <span class="icon is-small is-left">
+                                 <i class="fas fa-key"></i>
+                            </span>
+                                <a class="help is-danger"></a>
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <h1 class="title">Banner Motd</h1>
+                <div class="field">
+                    <p class="control is-expanded has-icons-left has-icons-right">
+                        <textarea id="banner_motd" class="textarea" rows="5" name="banner_motd" placeholder="******************************&#10;*                                           *&#10;*           Lyon e-Sport           *&#10;*                                           *&#10;******************************" minlength="4" maxlength="400" required title="4 characters minimum and 255 characters maximum">{{ setting.banner_motd }}</textarea>
+                        <span class="icon is-small is-right">
+                          <i class="fas fa-exclamation-triangle"></i>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <h1 class="title">Spanning Tree</h1>
+                <div class="field is-narrow">
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select id="spanning_tree" name="spanning_tree" required>
+                                {% if setting.spanning_tree == 'Yes' %}
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                {% else %}
+                                    <option>No</option>
+                                    <option>Yes</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <h1 class="title">Default gateway</h1>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left has-icons-right">
+                            <input id="default_gateway_ip" class="input" type="text" name="default_gateway_ip" placeholder="IP address (192.168.0.1)" value="{{ setting.default_gateway_ip }}" pattern=".{3,32}" required title="3 characters minimum and 32 characters maximum">
+                            <span class="icon is-small is-right">
+                              <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                            <span class="icon is-small is-left">
+                              <i class="fas fa-ethernet"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left has-icons-right">
+                            <input id="default_gateway_netmask" class="input" type="text" name="default_gateway_netmask" placeholder="Netmask (255.255.255.0)" value="{{ setting.default_gateway_netmask }}" pattern=".{3,32}" required title="3 characters minimum and 32 characters maximum">
+                            <span class="icon is-small is-right">
+                              <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                            <span class="icon is-small is-left">
+                              <i class="fas fa-ethernet"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <h1 class="title">VLAN</h1>
+                <div id="error_vlan" class="container is-hidden">
+                    <article class="message is-danger">
+                        <div class="message-header">
+                            <p>Error !</p>
+                            <a class="delete hide-message"></a>
+                        </div>
+                        <div id="error_vlan_message" class="message-body">
+                        </div>
+                    </article>
+                    <br>
+                </div>
+                <table id="tabVlan" class="table is-hoverable is-fullwidth is-bordered">
+                    <thead>
+                    <tr>
+                        <th class="has-text-info has-text-centered">ID</th>
+                        <th class="has-text-info has-text-centered">Name</th>
+                        <th class="has-text-info has-text-centered">IP</th>
+                        <th class="has-text-info has-text-centered">Network</th>
+                        <th class="has-text-info has-text-centered">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <div class="field has-addons has-addons-centered">
+                    <p class="control">
+                        <input id="add_vlan_id" class="input" type="number" min="1" max="4096" placeholder="VLAN id">
+                    </p>
+                    <p class="control">
+                        <input id="add_vlan_name" class="input" type="text" minlength="4" maxlength="20" placeholder="VLAN name">
+                    </p>
+                    <p class="control">
+                        <input id="add_vlan_ip" class="input" type="text" placeholder="IP address (192.168.0.1)">
+                    </p>
+                    <p class="control">
+                        <input id="add_vlan_netmask" class="input" type="text" placeholder="Netmask (255.255.255.0)">
+                    </p>
+                    <p class="control">
+                        <a id="create_vlan" class="button is-info">
+                            <span class="icon is-small">
+                                <i class="fas fa-plus-circle"></i>
+                            </span>
+                            <span>Create VLAN</span>
+                        </a>
+                    </p>
+                </div>
+                <input id="vlan_list" name="vlan_list" type="hidden" data-info='{{ setting.vlan|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}'>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <h1 class="title">Port template</h1>
+                <div id="error_port" class="container is-hidden">
+                    <article class="message is-danger">
+                        <div class="message-header">
+                            <p>Error !</p>
+                            <a class="delete hide-message"></a>
+                        </div>
+                        <div id="error_port_message" class="message-body">
+                        </div>
+                    </article>
+                    <br>
+                </div>
+                <table id="tabPort" class="table is-hoverable is-fullwidth is-bordered">
+                    <thead>
+                    <tr>
+                        <td rowspan="1"></td>
+                        <th class="has-text-info has-text-centered">Untagged</th>
+                        <th class="has-text-info has-text-centered">Tagged</th>
+                        <th class="has-text-info has-text-centered">Assignment</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="has-text-centered">Distribution port</td>
+                            <td class="has-text-centered"><div id="distribution_port_untagged" class="field is-grouped is-grouped-multiline"></div></td>
+                            <td class="has-text-centered"><div id="distribution_port_tagged" class="field is-grouped is-grouped-multiline"></div></td>
+                            <td class="has-text-centered">Default</td>
+                        </tr>
+                        <tr>
+                            <td class="has-text-centered">Uplink port</td>
+                            <td class="has-text-centered"><div id="uplink_port_untagged" class="field is-grouped is-grouped-multiline"></div></td>
+                            <td class="has-text-centered"><div id="uplink_port_tagged" class="field is-grouped is-grouped-multiline"></div></td>
+                            <td class="has-text-centered">
+                                <div class="field">
+                                    <p class="control is-expanded has-icons-right">
+                                        <input id="uplink_port_nb" class="input" type="number" name="uplink_port_nb" min="0" max="5" placeholder="1" value="{{ setting.vlan_setting.uplink_port_nb }}">
+                                        <span class="icon is-small is-right">
+                                          <i class="fas fa-exclamation-triangle"></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select id="uplink_port_position" name="uplink_port_position" required>
+                                                {% if setting.vlan_setting.uplink_port_position == "First ports" %}
+                                                    <option>First ports</option>
+                                                    <option>Last ports</option>
+                                                {% else %}
+                                                    <option>Last ports</option>
+                                                    <option>First ports</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="field has-addons has-addons-centered">
+                    <p class="control">
+                        <span class="select">
+                          <select id="select_port_template">
+                            <option>Distribution port</option>
+                            <option>Uplink port</option>
+                          </select>
+                        </span>
+                    </p>
+                    <p class="control">
+                        <span class="select">
+                          <select id="select_vlan_type">
+                            <option>Untagged</option>
+                            <option>Tagged</option>
+                          </select>
+                        </span>
+                    </p>
+                    <p class="control">
+                        <span class="select">
+                          <select id="select_vlan">
+                          </select>
+                        </span>
+                    </p>
+                    <p class="control">
+                        <a id="add_vlan_to_port" class="button is-info">
+                            <span class="icon is-small">
+                                <i class="fas fa-plus-circle"></i>
+                            </span>
+                            <span>Add VLAN to port</span>
+                        </a>
+                    </p>
+                </div>
+                <input id="distribution_port_untagged_form" name="distribution_port_untagged" type="hidden">
+                <input id="distribution_port_tagged_form" name="distribution_port_tagged" type="hidden">
+                <input id="uplink_port_untagged_form" name="uplink_port_untagged" type="hidden">
+                <input id="uplink_port_tagged_form" name="uplink_port_tagged" type="hidden">
+            </div>
+        </section>
+        <input name="{{ csrf.name }}" value="{{ csrf.value }}" type="hidden">
+        {% if setting is not empty %}
+            <input name="id" value="{{ setting.id }}" type="hidden">
+        {% else %}
+            <input name="new" type="hidden">
+        {% endif %}
+        <section class="section">
+            <div class="container has-text-centered">
+                <button id="save" class="button is-success" name="choice" value="save">
+                <span class="icon is-small">
+                    <i class="fas fa-check"></i>
+                </span>
+                    {% if setting is not empty %}
+                        <span>Save</span>
+                    {% else %}
+                        <span>Create</span>
+                    {% endif %}
+                </button>
+                <a href="setting.php" class="button is-danger">
+                    <span class="icon is-small">
+                      <i class="fas fa-times"></i>
+                    </span>
+                    <span>Cancel</span>
+                </a>
+            </div>
+        </section>
+    </form>
+{% endblock %}

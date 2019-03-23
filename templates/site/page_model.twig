@@ -1,0 +1,203 @@
+{% extends 'base.twig' %}
+{% block headers %}
+    {{ parent() }}
+    <script defer src="{{ js_path }}js/model.js" type="module"></script>
+{% endblock %}
+{% block body %}
+    {% if switch_list is not empty %}
+    <section class="section">
+        <div class="container">
+            <table class="table is-fullwidth is-bordered">
+                <thead>
+                    <tr>
+                        <th class="has-text-centered">Company</th>
+                        <th class="has-text-centered">Model</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key,company in switch_list %}
+                        <tr>
+                            <form action="model_backend.php" method="post">
+                                <td>
+                                    <div class="control">
+                                        <span class="tag is-primary">
+                                            {{ key }}
+                                            <a class="delete is-small is-danger modal-button" data-target="modal_{{ key }}" aria-haspopup="true"></a>
+                                        </span>
+                                    </div>
+                                    <div id="modal_{{ key }}" class="modal">
+                                        <div class="modal-background"></div>
+                                        <div class="modal-card">
+                                            <header class="modal-card-head">
+                                                <p class="modal-card-title">Warning !</p>
+                                                <a class="delete" aria-label="close"></a>
+                                            </header>
+                                            <section class="modal-card-body">
+                                                <div class="notification is-danger">
+                                                    Are you sure you want to delete company {{ key }} ?
+                                                </div>
+                                            </section>
+                                            <footer class="modal-card-foot">
+                                                <div class="container has-text-right">
+                                                    <button class="button is-danger" name="choice" value="delete_company">
+                                                            <span class="icon is-small">
+                                                                <i class="fas fa-check"></i>
+                                                            </span>
+                                                        <span>Delete</span>
+                                                    </button>
+                                                    <a class="button">
+                                                            <span class="icon is-small">
+                                                              <i class="fas fa-times"></i>
+                                                            </span>
+                                                        <span>Cancel</span>
+                                                    </a>
+                                                </div>
+                                            </footer>
+                                        </div>
+                                    </div>
+                                </td>
+                                <input name="company" value="{{ key }}" type="hidden">
+                                <input name="{{ csrf.name }}" value="{{ csrf.value }}" type="hidden">
+                            </form>
+                            {% if company[0] is not empty %}
+                                <td>
+                                    <div class="field is-grouped is-grouped-multiline">
+                                        {% for switch in company %}
+                                            {% if switch.name and switch.id is not empty %}
+                                                <form class="control" action="model_backend.php" method="post">
+                                                    <div class="control">
+                                                        <span class="tag is-link">
+                                                          {{ switch.name }}
+                                                          <a class="delete is-small is-danger modal-button" data-target="modal_{{ key }}{{ switch.name }}" aria-haspopup="true"></a>
+                                                        </span>
+                                                    </div>
+                                                    <div id="modal_{{ key }}{{ switch.name }}" class="modal">
+                                                        <div class="modal-background"></div>
+                                                        <div class="modal-card">
+                                                            <header class="modal-card-head">
+                                                                <p class="modal-card-title">Warning !</p>
+                                                                <a class="delete" aria-label="close"></a>
+                                                            </header>
+                                                            <section class="modal-card-body">
+                                                                <div class="notification is-danger">
+                                                                    Are you sure you want to delete {{ switch.name }} of company {{ key }} ?
+                                                                </div>
+                                                            </section>
+                                                            <footer class="modal-card-foot">
+                                                                <div class="container has-text-right">
+                                                                    <button class="button is-danger" name="choice" value="delete_model">
+                                                                <span class="icon is-small">
+                                                                    <i class="fas fa-check"></i>
+                                                                </span>
+                                                                        <span>Delete</span>
+                                                                    </button>
+                                                                    <a class="button">
+                                                                <span class="icon is-small">
+                                                                  <i class="fas fa-times"></i>
+                                                                </span>
+                                                                        <span>Cancel</span>
+                                                                    </a>
+                                                                </div>
+                                                            </footer>
+                                                        </div>
+                                                    </div>
+                                                    <input name="model_id" value="{{ switch.id }}" type="hidden">
+                                                    <input name="{{ csrf.name }}" value="{{ csrf.value }}" type="hidden">
+                                                </form>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th class="has-text-centered">Company</th>
+                    <th class="has-text-centered">Model</th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+    {% else %}
+        <br>
+        <section>
+            <div class="container">
+                <article class="message is-info">
+                    <div class="message-header">
+                        <p>Information !</p>
+                    </div>
+                    <div class="message-body">
+                        You need to add a company.
+                    </div>
+                </article>
+            </div>
+        </section>
+        <br>
+    {% endif %}
+    <section class="section">
+        <div class="container">
+            {% if switch_list is not empty %}
+                <div class="columns">
+                    <div class="column">
+            {% endif %}
+            <form action="model_backend.php" method="post">
+                <div class="field has-addons has-addons-centered">
+                    <div class="control has-icons-right">
+                        <input id="add_company" class="input" type="text" name="company" placeholder="Add a company">
+                        <span class="icon is-small is-right">
+                          <i class="fas fa-exclamation-triangle"></i>
+                        </span>
+                    </div>
+                    <div class="control">
+                        <button id="button_add_company" class="button is-info" name="choice" value="add_company">
+                            <span class="icon is-small">
+                                <i class="fas fa-plus-circle"></i>
+                            </span>
+                            <span>Add</span>
+                        </button>
+                    </div>
+                </div>
+                <input name="{{ csrf.name }}" value="{{ csrf.value }}" type="hidden">
+            </form>
+            {% if switch_list is not empty %}
+                </div>
+                    <form action="model_backend.php" method="post">
+                        <div class="column">
+                            <div class="field has-addons has-addons-centered">
+                                <div class="control">
+                                    <div class="select is-success">
+                                      <select id="company" name="company" data-info='{{ switch_list|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}'>
+                                          {% for key,company in switch_list %}
+                                              <option>{{ key }}</option>
+                                          {% endfor %}
+                                      </select>
+                                    </div>
+                                </div>
+                                <p class="control has-icons-right">
+                                    <input id="add_model" class="input" type="text" name="model" placeholder="Add a model">
+                                    <span class="icon is-small is-right">
+                                      <i class="fas fa-exclamation-triangle"></i>
+                                    </span>
+                                </p>
+                                <div class="control">
+                                    <button id="button_add_model" class="button is-info" name="choice" value="add_model">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-plus-circle"></i>
+                                        </span>
+                                        <span>Add</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <input name="{{ csrf.name }}" value="{{ csrf.value }}" type="hidden">
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

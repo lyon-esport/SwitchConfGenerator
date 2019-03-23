@@ -1,0 +1,57 @@
+{% extends 'base.twig' %}
+{% block headers %}
+    {{ parent() }}
+    <script defer src="{{ js_path }}js/changePass_form.js" type="module"></script>
+{% endblock %}
+{% block body %}
+    <form action="setting_backend.php" method="post">
+        <section class="section">
+            <div class="container">
+                <h1 class="title">Change password</h1>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left has-icons-right">
+                            <input id="password" class="input" type="password" autocomplete="off" name="password" placeholder="New password"  pattern=".{4,32}" required title="32 characters minimum">
+                            <span class="icon is-small is-right">
+                              <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                            <span class="icon is-small is-left">
+                                 <i class="fas fa-key"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="field">
+                        <p class="control is-expanded has-icons-left has-icons-right">
+                            <input id="confirm_password" class="input" type="password" autocomplete="off" name="confirm_password" placeholder="Confirm new password"  pattern=".{4,32}" required title="32 characters minimum">
+                            <span class="icon is-small is-right">
+                              <i class="fas fa-exclamation-triangle"></i>
+                            </span>
+                            <span class="icon is-small is-left">
+                                 <i class="fas fa-key"></i>
+                            </span>
+                            <a class="help is-danger"></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <input name="{{ csrf.name }}" value="{{ csrf.value }}" type="hidden">
+        <input name="id" value="{{ id }}" type="hidden">
+        <section class="section">
+            <div class="container has-text-centered">
+                <button id="changePass" class="button is-success" name="choice" value="changePass">
+                    <span class="icon is-small">
+                      <i class="fas fa-check"></i>
+                    </span>
+                    <span>Save</span>
+                </button>
+                <a href="setting_edit.php?id={{ id }}" class="button is-danger">
+                    <span class="icon is-small">
+                      <i class="fas fa-times"></i>
+                    </span>
+                    <span>Cancel</span>
+                </a>
+            </div>
+        </section>
+    </form>
+{% endblock %}
