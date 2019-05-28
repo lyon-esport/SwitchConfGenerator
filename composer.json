@@ -1,0 +1,28 @@
+{
+    "name": "lyon-esport/switchconfgenerator",
+    "description": "The goal of this project is to generate switch distribution (can handle differents brands/models) configuration with templates of settings",
+    "homepage": "https://github.com/lyon-esport/SwitchConfGenerator",
+    "license": "CeCILL v2.1",
+    "authors": [
+        {
+            "name": "Ludovic Ortega",
+            "email": "ludovic.ortega@lyon-esport.fr",
+            "role": "Developer"
+        },
+        {
+            "name": "Etienne Guilluy",
+            "email": "etienne.guilluy@lyon-esport.fr",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "wiki": "https://github.com/lyon-esport/SwitchConfGenerator",
+        "issues": "https://github.com/lyon-esport/SwitchConfGenerator/issues",
+        "source": "https://github.com/lyon-esport/SwitchConfGenerator"
+    },
+    "require": {
+    	"php": "^7.0",
+    	"ext-pdo": "*",
+        "twig/twig": "^2.0"
+    }
+}
